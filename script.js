@@ -1,56 +1,61 @@
-// script.js - Logic cho app Marina Bay Sandz
+// HÀM CHUYỂN ĐỔI MÀN HÌNH (SCREENS)
+function showScreen(screenId) {
+  // 1. Ẩn tất cả các màn hình
+  const screens = document.querySelectorAll('.screen');
+  screens.forEach(screen => {
+    screen.classList.remove('active');
+  });
 
-let timeLeft = 300;        // 5 phút = 300 giây
-let currentPhase = 893;
-let lastResult = "";
-
-// Cập nhật timer mỗi giây
-function updateTimer() {
-  let minutes = Math.floor(timeLeft / 60);
-  let seconds = timeLeft % 60;
-  
-  document.getElementById('timer').textContent = 
-    `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-
-  if (timeLeft <= 0) {
-    // Quay số ngẫu nhiên
-    let numbers = Array.from({ length: 5 }, () => Math.floor(Math.random() * 10));
-    lastResult = numbers.join(' ');
-    
-    document.getElementById('result').innerHTML = 
-      `Kết quả: <strong>${lastResult}</strong>`;
-    
-    currentPhase++;
-    document.getElementById('phase').textContent = `MBS 5P - Phiên ${currentPhase}`;
-    
-    timeLeft = 300; // Reset timer
-  } else {
-    timeLeft--;
+  // 2. Hiển thị màn hình được chọn
+  const targetScreen = document.getElementById(screenId);
+  if (targetScreen) {
+    targetScreen.classList.add('active');
   }
+
+  // 3. Cập nhật trạng thái Active trên thanh Bottom Nav
+  const navItems = document.querySelectorAll('.nav-item');
+  navItems.forEach(item => {
+    item.classList.remove('active');
+    // Kiểm tra xem item có chứa hàm gọi screenId này không
+    if (item.getAttribute('onclick') && item.getAttribute('onclick').includes(screenId)) {
+      item.classList.add('active');
+    }
+  });
+
+  // Cuộn lên đầu trang khi chuyển màn hình
+  targetScreen.scrollTop = 0;
 }
 
-// Hàm đặt cược
-function bet(type) {
-  alert(`Đã đặt cược ${type} 1.98`);
-  // Có thể thêm animation hoặc hiệu ứng sau
-}
+// XỬ LÝ CHỌN PHƯƠNG THỨC THANH TOÁN
+document.querySelectorAll('.method').forEach(method => {
+  method.addEventListener('click', function() {
+    document.querySelectorAll('.method').forEach(m => m.classList.remove('active'));
+    this.classList.add('active');
+  });
+});
 
-// Đăng ký (đóng popup)
-function register() {
-  const username = document.getElementById('username').value;
-  if (username.trim() !== "") {
-    document.getElementById('popup').style.display = 'none';
-    alert(`Chào mừng ${username} đến với Marina Bay Sandz!`);
-  } else {
-    alert("Vui lòng nhập tên người dùng!");
+// GIẢ LẬP ĐỒNG HỒ ĐẾM NGƯỢC TRONG GAME
+let time = 45;
+setInterval(() => {
+  time--;
+  if (time < 0) time = 60;
+  const timerElement = document.querySelector('.timer');
+  if (timerElement) {
+    timerElement.textContent = `00:${time < 10 ? '0' + time : time}`;
   }
-}
+}, 1000);
 
-// Khởi động timer
-setInterval(updateTimer, 1000);
+// HIỆU ỨNG KHI BẤM NÚT ĐẶT CƯỢC
+document.querySelectorAll('.bet-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    const type = this.classList.contains('red') ? 'LỚN' : 'NHỎ';
+    alert(`Bạn đã đặt cược cửa ${type} thành công!`);
+  });
+});
 
-// Khởi tạo ban đầu
-window.onload = function() {
-  document.getElementById('timer').textContent = "05:00";
-  document.getElementById('phase').textContent = `MBS 5P - Phiên ${currentPhase}`;
-};
+// HIỆU ỨNG KHI XÁC NHẬN NẠP/RÚT
+document.querySelectorAll('.action-btn').forEach(btn => {
+  btn.addEventListener('click', function() {
+    alert('Yêu cầu của bạn đã được gửi đi. Vui lòng chờ hệ thống xử lý!');
+  });
+});
