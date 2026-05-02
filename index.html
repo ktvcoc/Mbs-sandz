@@ -1,159 +1,219 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Marina Bay Sandz - Singapore</title>
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { 
+            --v-blue: #00d2ff; 
+            --v-red: #ff4b2b; 
+            --v-yellow: #f8ff00; 
+            --v-purple: #a044ff;
+            --dark-bg: #050505; 
+        }
+        body { background: var(--dark-bg); color: #eee; font-family: 'Segoe UI', Arial, sans-serif; margin: 0; overflow: hidden; }
+        .sidebar { width: 250px; background: #000; height: 100vh; position: fixed; border-right: 2px solid var(--v-blue); }
+        .main-content { margin-left: 250px; padding: 20px; height: 100vh; display: flex; flex-direction: column; }
+        .nav-item { padding: 15px; cursor: pointer; border-bottom: 1px solid #222; transition: 0.3s; color: var(--v-blue); font-weight: bold; }
+        .nav-item:hover, .nav-item.active { background: #111; color: var(--v-yellow); box-shadow: inset 5px 0 0 var(--v-yellow); }
+        
+        .header h1 { color: var(--v-yellow); text-shadow: 0 0 5px rgba(248, 255, 0, 0.5); font-size: 24px; }
+        
+        /* Grid System */
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
+        .card { background: #111; border: 1px solid #333; padding: 15px; text-align: center; border-radius: 8px; transition: 0.3s; }
+        .card:hover { border-color: var(--v-blue); transform: translateY(-3px); }
+        .card h3 { font-size: 14px; margin-bottom: 10px; color: var(--v-blue); }
+        
+        button { cursor: pointer; background: #222; border: 1px solid var(--v-blue); color: var(--v-blue); padding: 10px; border-radius: 5px; width: 100%; font-weight: bold; transition: 0.3s; }
+        button:hover { background: var(--v-blue); color: #000; }
+
+        /* V16 RESULT FRAME: Tương thích mọi màn hình */
+        #cmd-output, #tool-output { 
+            margin-top: 20px; 
+            background: #000; 
+            padding: 15px; 
+            border: 1px solid #222; 
+            color: #aaa; 
+            font-family: 'Consolas', monospace; 
+            min-height: 100px;
+            overflow-x: auto;
+            word-wrap: break-word;
+            transition: all 0.5s ease;
+        }
+
+        .v16-active-frame { 
+            border: 4px double var(--v-purple) !important;
+            box-shadow: 0 0 20px rgba(160, 68, 255, 0.4);
+            position: relative;
+        }
+        .v16-active-frame::before {
+            content: "KẾT QUẢ v16 - TRỰC CHIẾN";
+            position: absolute;
+            top: -12px;
+            left: 10px;
+            background: var(--v-purple);
+            color: #fff;
+            font-size: 10px;
+            padding: 2px 8px;
+            border-radius: 3px;
+        }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 60px; }
+            .nav-item span { display: none; }
+            .main-content { margin-left: 60px; }
+        }
+    </style>
 </head>
 <body>
-
-  <!-- MÀN HÌNH TRANG CHỦ -->
-  <div id="home-screen" class="screen active">
-    <header class="app-header">
-      <div class="logo">MARINA BAY SANDZ</div>
-      <div class="user-info">
-        <i class="fas fa-wallet"></i> <span id="balance">5,000</span>
-      </div>
-    </header>
-
-    <div class="banner-slider">
-      <img src="assets/home.jpg" alt="Banner">
+    <div class="sidebar">
+        <h2 style="padding: 20px; color: var(--v-red); font-size: 18px;">vMax Core v8</h2>
+        <div class="nav-item active" onclick="showTab('ai-chat')">💬 <span>AI Trợ Lý</span></div>
+        <div class="nav-item" onclick="showTab('command-center')">📊 <span>Trực Chiến</span></div>
+        <div class="nav-item" onclick="showTab('security-tools')">🛡️ <span>Ổ Z Assets</span></div>
     </div>
 
-    <div class="announcement">
-      <i class="fas fa-bullhorn"></i>
-      <marquee>Chào mừng bạn đến với Marina Bay Sandz - Sảnh game uy tín hàng đầu Singapore...</marquee>
-    </div>
-
-    <div class="game-grid">
-      <div class="game-item" onclick="showScreen('game-screen')">
-        <img src="assets/game_menu.jpg" alt="Game">
-        <p>Sảnh Game</p>
-      </div>
-      <div class="game-item">
-        <img src="assets/tro_choi.jpg" alt="Live">
-        <p>Live Casino</p>
-      </div>
-      <div class="game-item">
-        <img src="https://i.imgur.com/8zq3X9k.jpg" alt="Sport">
-        <p>Thể Thao</p>
-      </div>
-      <div class="game-item">
-        <img src="https://i.imgur.com/7kL9p2q.jpg" alt="Slot">
-        <p>Nổ Hũ</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- MÀN HÌNH TRÒ CHƠI -->
-  <div id="game-screen" class="screen">
-    <div class="screen-header">
-      <i class="fas fa-chevron-left" onclick="showScreen('home-screen')"></i>
-      <span>Sảnh Trò Chơi</span>
-    </div>
-    <div class="content">
-      <div class="game-detail-card">
-        <img src="assets/tro_choi.jpg" alt="Game Detail">
-        <div class="timer">00:45</div>
-        <div class="bet-options">
-          <button class="bet-btn red">Lớn</button>
-          <button class="bet-btn blue">Nhỏ</button>
+    <div class="main-content">
+        <div id="ai-chat" class="screen active">
+            <div class="header"><h1>TIẾP NHẬN YÊU CẦU</h1></div>
+            <div id="chat-box" style="flex:1; background:#080808; border:1px solid #222; margin-bottom:10px; padding:15px; overflow-y:auto; border-radius:8px;"></div>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="ai-input" placeholder="Nhập lệnh cho Sứ giả..." style="flex:1; background:#111; border:1px solid #333; color:#fff; padding:12px; border-radius:5px;">
+                <button onclick="sendToAI()" style="width:120px; border-color:var(--v-yellow); color:var(--v-yellow);">GỬI LỆNH</button>
+            </div>
         </div>
-      </div>
-    </div>
-  </div>
 
-  <!-- MÀN HÌNH NẠP TIỀN -->
-  <div id="deposit-screen" class="screen">
-    <div class="screen-header">
-      <span>Nạp Tiền</span>
-    </div>
-    <div class="content p-20">
-      <div class="payment-methods">
-        <div class="method active"><i class="fas fa-university"></i> Ngân Hàng</div>
-        <div class="method"><i class="fas fa-mobile-alt"></i> Ví Momo</div>
-      </div>
-      <div class="input-group">
-        <label>Số tiền nạp</label>
-        <input type="number" placeholder="Tối thiểu 50,000">
-      </div>
-      <button class="action-btn">Xác Nhận Nạp Tiền</button>
-      <div class="guide">
-        <img src="assets/nap_tien.jpg" alt="Hướng dẫn nạp" style="width:100%; margin-top:20px; border-radius:10px;">
-      </div>
-    </div>
-  </div>
+        <div id="command-center" class="screen">
+            <div class="header"><h1>BẢNG ĐIỀU KHIỂN v16 / v22</h1></div>
+            <div class="grid">
+                <div class="card"><h3>NHẬT KÝ SMS</h3><button onclick="runCommand('sms')">TRÍCH XUẤT</button></div>
+                <div class="card"><h3>ĐA PHƯƠNG TIỆN</h3><button onclick="runCommand('photos')">QUÉT ẢNH</button></div>
+                <div class="card" style="border-color: var(--v-red);"><h3>THẨM ĐỊNH IP</h3><button onclick="runCommand('audit-visitor')" style="color:var(--v-red); border-color:var(--v-red);">KIỂM TRA</button></div>
+                <div class="card"><h3>LEO THANG QUYỀN</h3><button onclick="runCommand('privilege-escalation')">ROOT TEST</button></div>
+                <div class="card"><h3>SINH TRẮC HỌC</h3><button onclick="runCommand('biometrics')">PHÂN TÍCH</button></div>
+                <div class="card" style="border-color: var(--v-yellow);"><h3>vMax AUTO 100%</h3><button onclick="runCommand('star-signal')" style="background:rgba(248,255,0,0.1); color:var(--v-yellow); border-color:var(--v-yellow);">KÍCH HOẠT</button></div>
+            </div>
+            <div id="cmd-output">Sẵn sàng nhận lệnh trích xuất...</div>
+        </div>
 
-  <!-- MÀN HÌNH RÚT TIỀN -->
-  <div id="withdraw-screen" class="screen">
-    <div class="screen-header">
-      <span>Rút Tiền</span>
+        <div id="security-tools" class="screen">
+            <div class="header"><h1>QUẢN LÝ Ổ Z (SECURITY)</h1></div>
+            <div class="card" style="max-width: 500px; margin: 0 auto;">
+                <h3 style="color:var(--v-yellow);">XỬ LÝ DỮ LIỆU vMax</h3>
+                <input type="text" id="tool-target" placeholder="Đường dẫn file trên ổ Z:\" style="width:100%; padding:10px; background:#000; border:1px solid #333; color:#fff; margin-bottom:10px;">
+                <div style="display:flex; gap:10px;">
+                    <button onclick="runTool('decrypt')" style="flex:1;">GIẢI MÃ</button>
+                    <button onclick="runTool('armor')" style="flex:1; border-color:var(--v-purple); color:var(--v-purple);">BỌC THÉP</button>
+                </div>
+            </div>
+            <div id="tool-output">Chờ lệnh xử lý từ ổ Z...</div>
+        </div>
     </div>
-    <div class="content p-20">
-      <div class="withdraw-card">
-        <p>Số dư khả dụng</p>
-        <h2>5,000,000 VND</h2>
-      </div>
-      <div class="input-group">
-        <label>Số tiền muốn rút</label>
-        <input type="number" placeholder="Nhập số tiền">
-      </div>
-      <div class="input-group">
-        <label>Mật khẩu rút tiền</label>
-        <input type="password" placeholder="******">
-      </div>
-      <button class="action-btn secondary">Gửi Yêu Cầu Rút</button>
-      <img src="assets/rut_tien.jpg" alt="Hướng dẫn rút" style="width:100%; margin-top:20px; border-radius:10px;">
-    </div>
-  </div>
 
-  <!-- MÀN HÌNH TÀI KHOẢN -->
-  <div id="account-screen" class="screen">
-    <div class="account-header">
-      <div class="avatar">
-        <img src="https://i.imgur.com/3vL2p8m.jpg" alt="Avatar">
-      </div>
-      <div class="user-meta">
-        <h3>User_88899</h3>
-        <p>Cấp bậc: VIP 1</p>
-      </div>
-    </div>
-    <div class="menu-list">
-      <div class="menu-item"><i class="fas fa-history"></i> Lịch sử đặt cược <i class="fas fa-chevron-right"></i></div>
-      <div class="menu-item"><i class="fas fa-shield-alt"></i> Bảo mật tài khoản <i class="fas fa-chevron-right"></i></div>
-      <div class="menu-item"><i class="fas fa-headset"></i> Chăm sóc khách hàng <i class="fas fa-chevron-right"></i></div>
-      <div class="menu-item red" onclick="location.reload()"><i class="fas fa-sign-out-alt"></i> Đăng xuất</div>
-    </div>
-    <img src="assets/tai_khoan.jpg" alt="Profile" style="width:100%; padding:20px; border-radius:30px;">
-  </div>
+    <script>
+        // Tự động đóng khung khi có kết quả
+        function applyV16Frame(elementId) {
+            const el = document.getElementById(elementId);
+            el.classList.add('v16-active-frame');
+            // Tự động cuộn đến kết quả
+            el.scrollIntoView({ behavior: 'smooth' });
+        }
 
-  <!-- THANH ĐIỀU HƯỚNG DƯỚI (BOTTOM NAV) -->
-  <nav class="bottom-nav">
-    <div class="nav-item active" onclick="showScreen('home-screen')">
-      <i class="fas fa-home"></i>
-      <span>Trang chủ</span>
-    </div>
-    <div class="nav-item" onclick="showScreen('deposit-screen')">
-      <i class="fas fa-plus-circle"></i>
-      <span>Nạp tiền</span>
-    </div>
-    <div class="nav-item main" onclick="showScreen('game-screen')">
-      <div class="center-btn">
-        <i class="fas fa-gamepad"></i>
-      </div>
-    </div>
-    <div class="nav-item" onclick="showScreen('withdraw-screen')">
-      <i class="fas fa-wallet"></i>
-      <span>Rút tiền</span>
-    </div>
-    <div class="nav-item" onclick="showScreen('account-screen')">
-      <i class="fas fa-user"></i>
-      <span>Tôi</span>
-    </div>
-  </nav>
+        async function runCommand(action) {
+            const output = document.getElementById('cmd-output');
+            output.classList.remove('v16-active-frame');
+            output.innerText = "Đang thực thi lệnh hệ thống qua luồng Proxy...";
+            
+            const res = await fetch('/api/command-center', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({action})
+            });
+            const data = await res.json();
+            output.innerText = data.output || data.error;
+            
+            // Nếu là lệnh trích xuất (v16), đóng khung ngay
+            applyV16Frame('cmd-output');
+        }
 
-  <script src="script.js"></script>
+        async function runTool(tool) {
+            const output = document.getElementById('tool-output');
+            output.classList.remove('v16-active-frame');
+            const target = document.getElementById('tool-target').value;
+            if(!target) return alert('Vui lòng nhập đường dẫn trên ổ Z!');
+
+            output.innerText = "Sứ giả đang xử lý dữ liệu trên ổ Z...";
+            const res = await fetch('/api/tools', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({tool, targetPath: target})
+            });
+            const data = await res.json();
+            output.innerText = data.output || data.error;
+            applyV16Frame('tool-output');
+        }
+
+        function showTab(id) {
+            document.querySelectorAll('.screen').forEach(s => s.style.display = 'none');
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById(id).style.display = 'flex';
+            event.currentTarget.classList.add('active');
+        }
+        // Khởi tạo tab mặc định
+        showTab('ai-chat');
+    </script>
+</body>
+</html>
+
+    <script>
+        function showTab(id) {
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+            document.getElementById(id).classList.add('active');
+            event.target.classList.add('active');
+        }
+
+        async function sendToAI() {
+            const input = document.getElementById('ai-input');
+            const box = document.getElementById('chat-box');
+            if(!input.value) return;
+
+            box.innerHTML += `<div><b>Sếp:</b> ${input.value}</div>`;
+            const prompt = input.value;
+            input.value = '';
+
+            const res = await fetch('/api/generate', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({prompt})
+            });
+            const data = await res.json();
+            box.innerHTML += `<div style="color:var(--neon-green); margin-bottom:10px;"><b>Gemini:</b> ${data.text}</div>`;
+            box.scrollTop = box.scrollHeight;
+        }
+
+        async function runCommand(action) {
+            const output = document.getElementById('cmd-output');
+            output.innerText = `Đang thực thi lệnh ${action}...`;
+            const res = await fetch('/api/command-center', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({action})
+            });
+            const data = await res.json();
+            output.innerText = data.output || data.error;
+        }
+
+        async function runTool(tool) {
+            const target = document.getElementById('tool-target').value;
+            const output = document.getElementById('tool-output');
+            if(!target) return alert('Vui lòng nhập đường dẫn mục tiêu!');
+
+            output.innerText = `Đang kích hoạt võ công ${tool}...`;
+            const res = await fetch('/api/tools', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({tool, targetPath: target})
+            });
+            const data = await res.json();
+            output.innerText = data.output || data.error;
+        }
+    </script>
 </body>
 </html>
